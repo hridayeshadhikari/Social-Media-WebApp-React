@@ -43,7 +43,7 @@ const PostCard = ({ item }) => {
 
     const handleSavePost = () => {
         dispatch(savePost(item.id))
-        console.log("savedPost-------->",post.savePost)
+        console.log("savedPost-------->", post.savePost)
     }
 
     const handleLikeComment = (commentId) => {
@@ -55,7 +55,7 @@ const PostCard = ({ item }) => {
         dispatch(getSavePost())
     }, [dispatch])
     // console.log("savedPost--------$$$$>",post.savePost)
-    
+
 
 
     const createdAtDate = new Date(item?.createdAt);
@@ -74,11 +74,11 @@ const PostCard = ({ item }) => {
                 await navigator.share({
                     title: 'Share Post',
                     text: `Check out this post by ${item.user.firstName} ${item.user.lastName}: ${item.caption}`,
-                    url: window.location.href // You might want to change this to the actual URL of your post
+                    url: window.location.href
                 });
             } else {
                 console.log("Web Share API not supported");
-                // You can provide fallback behavior here, like opening a share dialog or copying the post URL to clipboard
+
             }
         } catch (error) {
             console.error('Error sharing:', error);
@@ -129,7 +129,7 @@ const PostCard = ({ item }) => {
                 </div>
                 <div>
                     <IconButton aria-label="bookmark" onClick={handleSavePost}>
-                        {isPostSaved(post.savePost,item) ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        {isPostSaved(post.savePost, item) ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                     </IconButton>
                 </div>
             </CardActions>
@@ -153,28 +153,32 @@ const PostCard = ({ item }) => {
                         <h1 className='font-bold'>Comments....</h1>
                         {
                             item.comments && item.comments.length > 0 ? (
-                                item.comments?.slice().reverse().map((comment) =>
-                                    <div className=' flex justify-between items-center' key={comment.id}>
-                                        <div className='flex items-center space-x-5' >
-                                            <Avatar sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }}>
-
-                                            </Avatar>
-                                            <div className='flex-col'>
-                                                <h1 className='font-bold'>
-                                                    @{comment.user.firstName.toLowerCase()}_{comment.user.lastName.toLowerCase()} ( {daysPassed > 1 ? `${daysPassed} day ago` : 'today'} )
-                                                </h1>
-                                                <p>{comment.description}</p>
+                                item.comments?.slice().reverse().map((comment) => {
+                                    const createdAtDate = new Date(comment.createdAt);
+                                    const currentDate = new Date();
+                                    const timeDifferenceMs = currentDate - createdAtDate;
+                                    const daysDifference = timeDifferenceMs / (1000 * 60 * 60 * 24);
+                                    const daysPassed = Math.round(daysDifference);
+                                    return (
+                                        <div className=' flex justify-between items-center' key={comment.id}>
+                                            <div className='flex items-center space-x-5' >
+                                                <Avatar sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }}></Avatar>
+                                                <div className='flex-col'>
+                                                    <h1 className='font-bold'>
+                                                        @{comment.user.firstName.toLowerCase()}_{comment.user.lastName.toLowerCase()} ( {daysPassed > 1 ? `${daysPassed} day ago` : 'today'} )
+                                                    </h1>
+                                                    <p>{comment.description}</p>
+                                                </div>
                                             </div>
-
+                                            <div className='flex-col'>
+                                                <IconButton onClick={() => handleLikeComment(comment.id)} aria-label="like-comment">
+                                                    {isCommentLiked(auth.jwt.id, comment) ? <FavoriteIcon sx={{ color: "red" }} /> : <FavoriteBorderIcon />}
+                                                </IconButton>
+                                                <p className='font-bold'>{comment.liked.length} likes</p>
+                                            </div>
                                         </div>
-                                        <div className='flex-col'>
-                                            <IconButton onClick={() => handleLikeComment(comment.id)} aria-label="like-comment">
-                                                {isCommentLiked(auth.jwt.id, comment) ? <FavoriteIcon sx={{ color: "red" }} /> : <FavoriteBorderIcon />}
-                                            </IconButton>
-                                            <p className='font-bold'>{comment.liked.length} likes</p>
-                                        </div>
-
-                                    </div>)
+                                    );
+                                })
                             ) : (
                                 <p className='text-center font-bold'>No comments</p>
                             )
