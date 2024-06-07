@@ -1,7 +1,8 @@
 import axios from "axios"
 
 //url in which backend application is running
-export const API_BASE_URL="https://social-media-webapp-production.up.railway.app"
+// export const API_BASE_URL="https://social-media-webapp-production.up.railway.app"
+export const API_BASE_URL="http://localhost:1212"
 
 const jwtToken=localStorage.getItem("jwt")
 

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import SearchUser from '../SearchUser/SearchUser';
 import PopularUser from './PopularUser';
 import { Card } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUser } from '../../Redux/Auth/auth.action';
+import SearchFollowUser from '../SearchUser/SearchFollowUser';
 
 const HomeRight = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const HomeRight = () => {
 
   return (
     <div className='pr-5'>
-      <SearchUser/>
+      <SearchFollowUser/>
       <Card>
         <div className='flex justify-between py-5 items-center'>
           <p className='font-semibold opacity-70 ml-3'>Suggestions for you</p>
