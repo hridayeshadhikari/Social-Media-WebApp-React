@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
-import { Button, Card } from '@mui/material';
+import { Button, Card} from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -18,11 +18,15 @@ const tabs = [{ value: "post", name: "Posts" },
 { value: "saved", name: "Saved" },
 { value: "repost", name: "Repost" },
 ]
-const reels = [1, 1, 1, 1, 1, 1];
+
+
 
 const Profile = () => {
+
+  
+
   const [value, setValue] = React.useState('post');
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -35,39 +39,40 @@ const Profile = () => {
     setValue(newValue);
   };
 
-  const { auth,post,reel } = useSelector(store => store);
+  const { auth, post, reel } = useSelector(store => store);
   const { id } = useParams();
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getUsersPostAction(auth?.user.id))
-    
-  },[dispatch, auth?.user.id])
 
-  useEffect(()=>{
+  }, [dispatch, auth?.user.id])
+
+  useEffect(() => {
     dispatch(getSavePost())
-  },[dispatch])
+  }, [dispatch])
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getUsersReel(auth.jwt.id))
-  },[dispatch])
+  }, [dispatch])
 
-  console.log("=====--------->",reel)
+  console.log("=====--------->", reel)
 
-  
-  
+
+
   return (
     <Card className='my-10 w-[70%]'>
       <div className='rounded-md'>
         <div className='h-[14rem]'>
-          <img className='w-full h-full rounded-t-md' src="https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?cs=srgb&dl=pexels-james-wheeler-414612.jpg&fm=jpg" alt="" />
+          <img className='w-full h-full rounded-t-md' src={auth.user.coverImage} alt="" />
         </div>
         <div className='px-5 flex justify-between items-start mt-5 h-[5rem]'>
-          <Avatar  onClick={handleOpenViewStory} className='tarnsform -translate-y-24 cursor-pointer' sx={{ height: "8rem", width: "8rem" }} src='https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100226.jpg?t=st=1705995186~exp=1705998786~hmac=9a0d68b55d7d18fb8ac72fdf8d1875d797b0bb7ebe28b1ed8fd8ff6c1aa486fc&w=740' />
+          <Avatar  className='tarnsform -translate-y-24 cursor-pointer' sx={{ height: "8rem", width: "8rem", border: "2px solid rgb(250, 100, 50)" }} src={auth.user.profileImage} />
+          
           {true ? <Button onClick={handleOpen} sx={{ borderRadius: "20px" }} variant='outlined'>Edit Profile</Button>
             : <Button sx={{ borderRadius: "20px" }} variant='outlined'>Follow</Button>}
         </div>
         <div className='p-5'>
           <div>
-            <h1 className='py-1 font-bold text-xl'>{auth.user?.firstName+" "+auth.user?.lastName}</h1>
+            <h1 className='py-1 font-bold text-xl'>{auth.user?.firstName + " " + auth.user?.lastName}</h1>
             <p>@{auth.user?.firstName.toLowerCase() + "_" + auth.user?.lastName.toLowerCase()}</p>
           </div>
           <div className='flex gap-3 items-center py-3'>
@@ -75,7 +80,7 @@ const Profile = () => {
             <span>{auth?.user.followers.length} Follower</span>
             <span>{auth?.user.following.length} Followings</span>
           </div>
-          
+
 
         </div>
         <section>
@@ -91,14 +96,14 @@ const Profile = () => {
           <div className='flex justify-center'>
             {value === "post" ? (<div className='space-y-5 w-[70%] my-10'>
               {post?.posts.map((item) => (<div className='border border-slate-100 rounded-md'>
-                <PostCard item={item}/>
+                <PostCard item={item} />
               </div>
               ))}
             </div>) : value === "reels" ? <div className='flex gap-2 flex-wrap justify-center'>
-              {reel.reel.map((item) => <ReelCard item={item}/>)}
+              {reel.reel.map((item) => <ReelCard item={item} />)}
             </div> : value === "saved" ? <div className='space-y-5 w-[70%] my-10'>
               {post?.savePost.map((item) => (<div className='border border-slate-100 rounded-md'>
-                <PostCard item={item}/>
+                <PostCard item={item} />
               </div>))}
             </div> : (
               <div>Repost</div>
@@ -107,7 +112,7 @@ const Profile = () => {
         </section>
       </div>
       <section>
-        <ProfileModal open={open} handleClose={handleClose}/>
+        <ProfileModal open={open} handleClose={handleClose} />
       </section>
       <ViewStoryModal handleClose={handleCloseViewStory} open={ViewStory} userId={auth.jwt.id} />
     </Card>

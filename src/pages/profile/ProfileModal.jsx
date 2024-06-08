@@ -3,10 +3,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik, useFormik } from 'formik';
 import { Avatar, IconButton, TextField } from '@mui/material';
 import { updateProfileAction } from '../../Redux/Auth/auth.action';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import { UploadToCloud } from '../../Utils/UploadToCloud';
+import defaultProfileImg from '../../Asset/download-blank.jpeg'
 
 const style = {
   position: 'absolute',
@@ -23,7 +26,27 @@ const style = {
 };
 
 export default function ProfileModal({ open, handleClose }) {
+  const {auth}=useSelector(store=>store);
   const dispatch = useDispatch();
+  const [selectedProlileImage, setSelectedProlileImage] = React.useState();
+  const [selectedCoverImage, setSelecedCoverImage] = React.useState();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleSelectProlfileImage = async (event) => {
+    setIsLoading(true)
+    const profImageUrl = await UploadToCloud(event.target.files[0], "image")
+    setSelectedProlileImage(profImageUrl);
+    setIsLoading(false)
+    formik.setFieldValue("profileImage",profImageUrl)
+  }
+
+  const handleSelectCoverImage=async(event)=>{
+    setIsLoading(true)
+    const coverImageUrl=await UploadToCloud(event.target.files[0],"image")
+    setSelecedCoverImage(coverImageUrl);
+    setIsLoading(false);
+    formik.setFieldValue("coverImage",coverImageUrl)
+  }
 
   const handleSubmit = (values) => {
     console.log("values", values)
@@ -31,7 +54,9 @@ export default function ProfileModal({ open, handleClose }) {
   const formik = useFormik({
     initialValues: {
       firstName: "",
-      lastName: ""
+      lastName: "",
+      profileImage:"",
+      coverImage:""
     },
     onSubmit: (values) => {
       console.log("values", values)
@@ -62,37 +87,51 @@ export default function ProfileModal({ open, handleClose }) {
 
             </div>
             <div>
-            <div className='h-[15rem]'>
-              <img className='w-full h-full' src="https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?cs=srgb&dl=pexels-james-wheeler-414612.jpg&fm=jpg" alt="" />
+              <div className='h-[15rem]' style={{ position: 'relative' }}>
+                <img className='w-full h-full' src={selectedCoverImage} alt="" />
+                <input type="file" accept='image/*' onChange={handleSelectCoverImage} style={{ display: "none" }} id='cover-image-input' />
+                <label htmlFor='cover-image-input'>
+                  <div style={{ position: 'absolute', top: '5%', right: '4%', borderRadius: '50%', backgroundColor: 'white', padding: '6px' }}>
+                    <AddAPhotoIcon style={{ color: 'black' }} />
+                  </div>
+                </label>
+              </div>
+
+
+              <div className='pl-5' style={{ position: 'relative' }}>
+                <Avatar className='transform -translate-y-20' sx={{ width: "8rem", height: "8rem" }} src={selectedProlileImage || auth.user.profileImage || defaultProfileImg} />
+                <input type="file" accept='image/*' onChange={handleSelectProlfileImage} style={{ display: "none" }} id='image-input' />
+                <label htmlFor='image-input'>
+                  <div style={{ position: 'absolute', bottom: '-1.5rem', left: '28%', transform: 'translateY(-450%)', borderRadius: '50%', backgroundColor: 'white', padding: '6px' }}>
+                    <AddAPhotoIcon style={{ color: 'black',cursor:'pointer' }} />
+                  </div>
+                </label>
+              </div>
 
             </div>
-            <div className='pl-5'>
-              <Avatar className='transform -translate-y-20' sx={{ width: "8rem", height: "8rem" }} src='https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100226.jpg?t=st=1705995186~exp=1705998786~hmac=9a0d68b55d7d18fb8ac72fdf8d1875d797b0bb7ebe28b1ed8fd8ff6c1aa486fc&w=740' />
 
-            </div>
-            </div>
             <div className='space-y-3'>
               <TextField fullWidth
-              id='firstName'
-              name='firstName'
-              label='First Name'
-              value={formik.values.firstName}
-              onChange={formik.handleChange}
+                id='firstName'
+                name='firstName'
+                label='First Name'
+                value={formik.values.firstName}
+                onChange={formik.handleChange}
               />
               <TextField
-              fullWidth
-              id='lastName'
-              name='lastName'
-              label='Last Name'
-              value={formik.values.lastName}
-              onChange={formik.handleChange}
+                fullWidth
+                id='lastName'
+                name='lastName'
+                label='Last Name'
+                value={formik.values.lastName}
+                onChange={formik.handleChange}
               />
 
             </div>
 
 
           </form>
-         
+
         </Box>
       </Modal>
     </div>

@@ -82,7 +82,7 @@ export const Sidebar = () => {
                 <Divider />
                 <div className='pl-5 flex items-center justify-between pt-5'>
                     <div className='flex items-center space-x-3 '>
-                        <Avatar src='https://thumbs.dreamstime.com/b/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137160339.jpg' />
+                        <Avatar src={auth.user.profileImage} />
 
                         <div >
                             <p className='font-bold'>{auth.user?.firstName + " " + auth.user?.lastName}</p>
