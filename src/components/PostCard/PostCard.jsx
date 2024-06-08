@@ -89,9 +89,9 @@ const PostCard = ({ item }) => {
         <Card className=''>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        R
-                    </Avatar>
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.user?.profileImage}/>
+                        
+                    
                 }
                 action={
                     <IconButton aria-label="settings">

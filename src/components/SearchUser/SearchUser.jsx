@@ -36,7 +36,7 @@ const SearchUser = () => {
                     handleClick(item.id)
                     setUsername("")
                   }}
-                  avatar={<Avatar src='https://images.pexels.com/photos/7490540/pexels-photo-7490540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' />}
+                  avatar={<Avatar src={item.profileImage} />}
 
                   title={item.firstName + " " + item.lastName}
                   subheader={item.firstName.toLowerCase() + "_" + item.lastName.toLowerCase()}

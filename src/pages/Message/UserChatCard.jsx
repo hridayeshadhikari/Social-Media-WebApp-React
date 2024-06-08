@@ -10,7 +10,7 @@ const UserChatCard = ({ chat }) => {
     <Card>
       <CardHeader avatar={
         <Avatar sx={{ width: "3rem", height: "3rem", fontSize: "1.5rem" }}
-          src='https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais' />
+          src={chat.users[1].profileImage} />
       }
         action={<IconButton>
           <MoreHorizIcon />

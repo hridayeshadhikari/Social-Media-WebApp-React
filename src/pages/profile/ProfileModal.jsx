@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, useFormik } from 'formik';
-import { Avatar, IconButton, TextField } from '@mui/material';
+import { Avatar, Backdrop, CircularProgress, IconButton, TextField } from '@mui/material';
 import { updateProfileAction } from '../../Redux/Auth/auth.action';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { UploadToCloud } from '../../Utils/UploadToCloud';
@@ -53,10 +53,10 @@ export default function ProfileModal({ open, handleClose }) {
   }
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      profileImage:"",
-      coverImage:""
+      firstName: auth.user.firstName || "",
+      lastName: auth.user.lastName || "",
+      profileImage: auth.user.profileImage || "",
+      coverImage: auth.user.coverImage || ""
     },
     onSubmit: (values) => {
       console.log("values", values)
@@ -83,7 +83,10 @@ export default function ProfileModal({ open, handleClose }) {
                 <p>Edit Profile</p>
 
               </div>
-              <Button type='submit'>Save</Button>
+              <Button onClick={()=>{
+                formik.handleSubmit();
+                handleClose();
+              }} >Save</Button>
 
             </div>
             <div>
@@ -99,7 +102,7 @@ export default function ProfileModal({ open, handleClose }) {
 
 
               <div className='pl-5' style={{ position: 'relative' }}>
-                <Avatar className='transform -translate-y-20' sx={{ width: "8rem", height: "8rem" }} src={selectedProlileImage || auth.user.profileImage || defaultProfileImg} />
+                <Avatar className='transform -translate-y-20' sx={{ width: "8rem", height: "8rem", border: "2px solid rgb(250, 100, 50)" }} src={selectedProlileImage || auth.user.profileImage || defaultProfileImg} />
                 <input type="file" accept='image/*' onChange={handleSelectProlfileImage} style={{ display: "none" }} id='image-input' />
                 <label htmlFor='image-input'>
                   <div style={{ position: 'absolute', bottom: '-1.5rem', left: '28%', transform: 'translateY(-450%)', borderRadius: '50%', backgroundColor: 'white', padding: '6px' }}>
@@ -131,7 +134,13 @@ export default function ProfileModal({ open, handleClose }) {
 
 
           </form>
-
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isLoading}
+            onClick={handleClose}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </Box>
       </Modal>
     </div>

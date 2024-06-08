@@ -145,7 +145,7 @@ const Message = () => {
           {currentChat ? <div>
             <div className='flex justify-between items-center border-l p-5'>
               <div className='flex items-center space-x-3 '>
-                <Avatar src='https://images.pexels.com/photos/1559486/pexels-photo-1559486.jpeg?auto=compress&cs=tinysrgb&w=600' />
+                <Avatar src={currentChat.users[1].profileImage} />
                 <p>{auth.user?.id === currentChat.users[0]?.id ? currentChat.users[1].firstName + " " +
                   currentChat.users[1].lastName : currentChat.users[0].firstName + " " + currentChat.users[0].lastName}</p>
               </div>

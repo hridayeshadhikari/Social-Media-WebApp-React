@@ -16,7 +16,6 @@ import ViewStoryModal from '../../components/middlepart/ViewStoryModal';
 const tabs = [{ value: "post", name: "Posts" },
 { value: "reels", name: "Reels" },
 { value: "saved", name: "Saved" },
-{ value: "repost", name: "Repost" },
 ]
 
 
@@ -54,18 +53,18 @@ const Profile = () => {
     dispatch(getUsersReel(auth.jwt.id))
   }, [dispatch])
 
-  console.log("=====--------->", reel)
+  // console.log("=====--------->", reel)
 
-
+  console.log("####$$$$$$")
 
   return (
     <Card className='my-10 w-[70%]'>
       <div className='rounded-md'>
         <div className='h-[14rem]'>
-          <img className='w-full h-full rounded-t-md' src={auth.user.coverImage} alt="" />
+          <img className='w-full h-[17rem] rounded-t-md' src={auth.user.coverImage} alt="" />
         </div>
-        <div className='px-5 flex justify-between items-start mt-5 h-[5rem]'>
-          <Avatar  className='tarnsform -translate-y-24 cursor-pointer' sx={{ height: "8rem", width: "8rem", border: "2px solid rgb(250, 100, 50)" }} src={auth.user.profileImage} />
+        <div className='px-5 flex justify-between items-start mt-14 h-[5rem]'>
+          <Avatar  className='tarnsform -translate-y-20 cursor-pointer' sx={{ height: "9rem", width: "9rem", border: "2px solid rgb(250, 100, 50)" }} src={auth.user.profileImage} />
           
           {true ? <Button onClick={handleOpen} sx={{ borderRadius: "20px" }} variant='outlined'>Edit Profile</Button>
             : <Button sx={{ borderRadius: "20px" }} variant='outlined'>Follow</Button>}
@@ -95,7 +94,7 @@ const Profile = () => {
           </Box>
           <div className='flex justify-center'>
             {value === "post" ? (<div className='space-y-5 w-[70%] my-10'>
-              {post?.posts.map((item) => (<div className='border border-slate-100 rounded-md'>
+              {post?.usersPost.map((item) => (<div className='border border-slate-100 rounded-md'>
                 <PostCard item={item} />
               </div>
               ))}
@@ -106,7 +105,7 @@ const Profile = () => {
                 <PostCard item={item} />
               </div>))}
             </div> : (
-              <div>Repost</div>
+              <div></div>
             )}
           </div>
         </section>

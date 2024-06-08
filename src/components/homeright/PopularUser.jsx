@@ -30,9 +30,8 @@ const PopularUser = ({ item }) => {
         <div>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        {item.firstName[0] + item.lastName[0]}
-                    </Avatar>
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.profileImage}/>
+                        
                 }
                 action={
                     <IconButton aria-label="settings">
