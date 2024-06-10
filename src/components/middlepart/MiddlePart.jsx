@@ -68,7 +68,7 @@ const MiddlePart = () => {
 
 
       <div className='mt-5 space-y-5'>
-        {post.posts.slice().reverse().map((item) => <PostCard item={item} />)}
+        {[...post.posts, ...post.newPost].map((item) => <PostCard item={item} />)}
       </div>
       <div>
         <CreateStoryModal handleClose={handleCloseCreateStoryModal} open={openCreateStoryModal} />

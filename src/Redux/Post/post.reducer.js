@@ -1,4 +1,4 @@
-import { CREATE_COMMENT_SUCCESS, CREATE_POST_FAILURE, CREATE_POST_REQUEST, CREATE_POST_SUCCESS, GET_ALL_POST_FAILURE, GET_ALL_POST_REQUEST, GET_ALL_POST_SUCCESS, GET_SAVE_POST_SUCCESS, GET_USERS_POST_FAILURE, GET_USERS_POST_REQUEST, GET_USERS_POST_SUCCESS, LIKE_COMMENT_FAILURE, LIKE_COMMENT_REQUEST, LIKE_COMMENT_SUCCESS, LIKE_POST_FAILURE, LIKE_POST_REQUEST, LIKE_POST_SUCCESS, SAVE_POST_FAILURE, SAVE_POST_REQUEST, SAVE_POST_SUCCESS } from "./post.actionType"
+import { CREATE_COMMENT_SUCCESS, CREATE_POST_FAILURE, CREATE_POST_REQUEST, CREATE_POST_SUCCESS, DELETE_POST_REQUEST, DELETE_POST_SUCCESS, GET_ALL_POST_FAILURE, GET_ALL_POST_REQUEST, GET_ALL_POST_SUCCESS, GET_SAVE_POST_SUCCESS, GET_USERS_POST_FAILURE, GET_USERS_POST_REQUEST, GET_USERS_POST_SUCCESS, LIKE_COMMENT_FAILURE, LIKE_COMMENT_REQUEST, LIKE_COMMENT_SUCCESS, LIKE_POST_FAILURE, LIKE_POST_REQUEST, LIKE_POST_SUCCESS, SAVE_POST_FAILURE, SAVE_POST_REQUEST, SAVE_POST_SUCCESS } from "./post.actionType"
 
 const initialState = {
     post: null,
@@ -10,6 +10,7 @@ const initialState = {
     newComment: null,
     savePost: [],
     usersPost: [],
+    newPost: []
 }
 export const postReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -19,17 +20,24 @@ export const postReducer = (state = initialState, action) => {
         case LIKE_COMMENT_REQUEST:
         case SAVE_POST_REQUEST:
         case GET_USERS_POST_REQUEST:
+        case DELETE_POST_REQUEST:
             return { ...state, loading: true, error: null }
 
         case GET_ALL_POST_SUCCESS:
             return {
                 ...state, posts: action.payload, loading: false, error: null, comments: action.payload.comments
             }
-        case CREATE_POST_SUCCESS:
-            return { ...state, post: action.payload, loading: false, error: null, posts: [action.payload, ...state.post] }
 
+        case CREATE_POST_SUCCESS:
+            return {
+                ...state,
+                posts: [action.payload, ...state.posts],
+                newPost: [action.payload, ...state.newPost],
+                loading: false,
+                error: null
+            };
         case GET_SAVE_POST_SUCCESS:
-        
+
             return {
                 ...state, savePost: action.payload, loading: false, error: null
             }
@@ -50,7 +58,7 @@ export const postReducer = (state = initialState, action) => {
             }
 
         case SAVE_POST_SUCCESS:
-            return{
+            return {
                 ...state,
                 savePost: action.payload,
                 loading: false,
@@ -71,7 +79,12 @@ export const postReducer = (state = initialState, action) => {
             return { ...state, error: action.payload, loading: false }
 
         case GET_USERS_POST_SUCCESS:
-            return{...state,usersPost:action.payload,error:null,loading:false}
+            return { ...state, usersPost: action.payload, error: null, loading: false }
+
+        case DELETE_POST_SUCCESS:
+            const updatedPosts = state.posts.filter(post => post.id !== action.payload);
+            return { ...state, posts: updatedPosts, error: null, loading: false };
+
 
         default:
             return state;

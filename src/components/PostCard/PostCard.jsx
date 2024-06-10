@@ -14,11 +14,13 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { createCommentAction, getSavePost, likeComment, likePostAction, savePost } from '../../Redux/Post/post.action';
+import { createCommentAction, deletePost, getSavePost, likeComment, likePostAction, savePost } from '../../Redux/Post/post.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { isPostLiked, numberOfLikes } from '../../Utils/isPostLiked';
 import { isCommentLiked } from '../../Utils/isCommentLiked';
 import { isPostSaved } from '../../Utils/isPostSaved';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const PostCard = ({ item }) => {
 
@@ -49,6 +51,13 @@ const PostCard = ({ item }) => {
     const handleLikeComment = (commentId) => {
         dispatch(likeComment(commentId))
 
+    }
+
+    const handleDeletePost=()=>{
+        dispatch(deletePost(item.id))
+        handleClose()
+
+        
     }
 
     useEffect(() => {
@@ -85,18 +94,46 @@ const PostCard = ({ item }) => {
         }
     };
 
+    const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
     return (
         <Card className=''>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.user?.profileImage}/>
-                        
-                    
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.user?.profileImage} />
+
+
                 }
                 action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
+                    <div>
+                        <IconButton
+                            aria-label="more"
+                            aria-controls="dropdown-menu"
+                            aria-haspopup="true"
+                            onClick={handleClick}
+                        >
+                            <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                            id="dropdown-menu"
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleClose}>Save</MenuItem>
+                            <MenuItem onClick={handleClose}>Share</MenuItem>
+                            {item.user.id===auth.user.id && <MenuItem onClick={handleDeletePost}>Delete</MenuItem>}
+                            <MenuItem onClick={handleClose}>Cancel</MenuItem>
+                        </Menu>
+                    </div>
                 }
                 title={item?.user.firstName + " " + item?.user.lastName}
                 subheader={"@" + item?.user.firstName.toLowerCase() + "_" + item?.user.lastName.toLowerCase()}

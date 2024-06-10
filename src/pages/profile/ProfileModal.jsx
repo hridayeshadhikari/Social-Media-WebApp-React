@@ -91,7 +91,7 @@ export default function ProfileModal({ open, handleClose }) {
             </div>
             <div>
               <div className='h-[15rem]' style={{ position: 'relative' }}>
-                <img className='w-full h-full' src={selectedCoverImage} alt="" />
+                <img className='w-full h-full' src={formik.values.coverImage} alt="" />
                 <input type="file" accept='image/*' onChange={handleSelectCoverImage} style={{ display: "none" }} id='cover-image-input' />
                 <label htmlFor='cover-image-input'>
                   <div style={{ position: 'absolute', top: '5%', right: '4%', borderRadius: '50%', backgroundColor: 'white', padding: '6px' }}>
