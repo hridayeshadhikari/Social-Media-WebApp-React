@@ -10,7 +10,7 @@ const StoryCircle = ({item}) => {
 
                 <Avatar
                     sx={{ width: "4rem", height: "4rem" }}
-                    src='https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?size=626&ext=jpg'
+                    src={item.user.profileImage}
                 >
 
                 </Avatar>

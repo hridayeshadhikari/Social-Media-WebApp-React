@@ -56,6 +56,11 @@ export const Sidebar = () => {
         setAnchorEl(null);
     };
 
+    const handleRedirectToProfile=()=>{
+        navigate(`/profile/${auth.user.id}`)
+        handleClose();
+    }
+
     const handleLogout=()=>{
         dispatch(logout())
         navigate("/login")
@@ -107,9 +112,9 @@ export const Sidebar = () => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={handleRedirectToProfile}>Profile</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        <MenuItem onClick={handleClose}>Cancel</MenuItem>
                     </Menu>
                 </div>
             </div>

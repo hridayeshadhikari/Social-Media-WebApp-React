@@ -5,13 +5,14 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { followUser } from '../../Redux/Auth/auth.action';
+import { Link } from 'react-router-dom';
 
 const PopularUser = ({ item }) => {
     const dispatch = useDispatch();
     const { auth } = useSelector((store) => store);
-    const [isFollowed, setIsFollowed] = useState(false); 
+    const [isFollowed, setIsFollowed] = useState(false);
 
-   
+
     useEffect(() => {
         setIsFollowed(auth?.jwt.following?.includes(item.id));
     }, [auth.jwt.following, item.id]);
@@ -30,8 +31,8 @@ const PopularUser = ({ item }) => {
         <div>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.profileImage}/>
-                        
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={item.profileImage} />
+
                 }
                 action={
                     <IconButton aria-label="settings">
@@ -40,7 +41,10 @@ const PopularUser = ({ item }) => {
                         </Button>
                     </IconButton>
                 }
-                title={item.firstName + ' ' + item.lastName}
+                title={
+                    <Link to={`/profile/${item.id}`}>{item.firstName + ' ' + item.lastName}
+                    </Link>
+                }
                 subheader={'@' + item.firstName.toLowerCase() + '_' + item.lastName.toLowerCase()}
             />
         </div>

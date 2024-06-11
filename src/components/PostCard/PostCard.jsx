@@ -46,6 +46,7 @@ const PostCard = ({ item }) => {
     const handleSavePost = () => {
         dispatch(savePost(item.id))
         console.log("savedPost-------->", post.savePost)
+        handleClose()
     }
 
     const handleLikeComment = (commentId) => {
@@ -92,6 +93,7 @@ const PostCard = ({ item }) => {
         } catch (error) {
             console.error('Error sharing:', error);
         }
+        handleClose()
     };
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -128,8 +130,8 @@ const PostCard = ({ item }) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Save</MenuItem>
-                            <MenuItem onClick={handleClose}>Share</MenuItem>
+                            <MenuItem onClick={handleSavePost}>Save</MenuItem>
+                            <MenuItem onClick={handleShare}>Share</MenuItem>
                             {item.user.id===auth.user.id && <MenuItem onClick={handleDeletePost}>Delete</MenuItem>}
                             <MenuItem onClick={handleClose}>Cancel</MenuItem>
                         </Menu>

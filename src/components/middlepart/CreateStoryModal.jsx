@@ -80,7 +80,7 @@ export default function CreateStoryModal({ handleClose, open }) {
           <form onSubmit={formik.handleSubmit}>
             <div>
               <div className='flex items-center space-x-4'>
-                <Avatar />
+                <Avatar src={auth.user.profileImage}/>
                 <div>
                   <p className='font-bold'>{auth.user?.firstName + " " + auth.user.lastName}</p>
                   <p className='text-sm'>@{auth.user?.firstName.toLowerCase() + " " + auth.user.lastName.toLowerCase()}</p>

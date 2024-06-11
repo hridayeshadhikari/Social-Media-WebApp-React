@@ -1,4 +1,4 @@
-import { FOLLOW_USER_FAILURE, FOLLOW_USER_REQUEST, FOLLOW_USER_SUCCESS, GET_ALL_USER_FAILURE, GET_ALL_USER_REQUEST, GET_ALL_USER_SUCCESS, GET_PROFILE_REQUEST, GET_PROFILE_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, REGISTER_REQUEST, REGISTER_SUCCESS, SEARCH_USER_SUCCESS, UPDATE_PROFILE_SUCCESS } from "./auth.actionType"
+import { FOLLOW_USER_FAILURE, FOLLOW_USER_REQUEST, FOLLOW_USER_SUCCESS, GET_ALL_USER_FAILURE, GET_ALL_USER_REQUEST, GET_ALL_USER_SUCCESS, GET_PROFILE_REQUEST, GET_PROFILE_SUCCESS, GET_SUGGESTED_USER_FAILURE, GET_SUGGESTED_USER_REQUEST, GET_SUGGESTED_USER_SUCCESS,  LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, REGISTER_REQUEST, REGISTER_SUCCESS, SEARCH_USER_SUCCESS, UPDATE_PROFILE_SUCCESS } from "./auth.actionType"
 
 const initialState = {
     jwt: null,
@@ -15,6 +15,7 @@ export const authReducer = (state = initialState, action) => {
         case GET_PROFILE_REQUEST:
         case FOLLOW_USER_REQUEST:
         case GET_ALL_USER_REQUEST:
+        case GET_SUGGESTED_USER_REQUEST:
             return { ...state, loading: true, error: null }
 
 
@@ -35,7 +36,10 @@ export const authReducer = (state = initialState, action) => {
                 error:null
             }
 
+       
+
         case GET_ALL_USER_SUCCESS:
+        case GET_SUGGESTED_USER_SUCCESS:
             return{
                 ...state,
                 users:action.payload,
@@ -47,6 +51,7 @@ export const authReducer = (state = initialState, action) => {
         case FOLLOW_USER_FAILURE:
         case LOGIN_FAILURE:
         case GET_ALL_USER_FAILURE:
+        case GET_SUGGESTED_USER_FAILURE:
             return { ...state, loading: false, error: action.payload }
         default:
             return state;

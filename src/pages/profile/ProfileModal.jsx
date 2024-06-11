@@ -26,7 +26,7 @@ const style = {
 };
 
 export default function ProfileModal({ open, handleClose }) {
-  const {auth}=useSelector(store=>store);
+  const { auth } = useSelector(store => store);
   const dispatch = useDispatch();
   const [selectedProlileImage, setSelectedProlileImage] = React.useState();
   const [selectedCoverImage, setSelecedCoverImage] = React.useState();
@@ -37,15 +37,15 @@ export default function ProfileModal({ open, handleClose }) {
     const profImageUrl = await UploadToCloud(event.target.files[0], "image")
     setSelectedProlileImage(profImageUrl);
     setIsLoading(false)
-    formik.setFieldValue("profileImage",profImageUrl)
+    formik.setFieldValue("profileImage", profImageUrl)
   }
 
-  const handleSelectCoverImage=async(event)=>{
+  const handleSelectCoverImage = async (event) => {
     setIsLoading(true)
-    const coverImageUrl=await UploadToCloud(event.target.files[0],"image")
+    const coverImageUrl = await UploadToCloud(event.target.files[0], "image")
     setSelecedCoverImage(coverImageUrl);
     setIsLoading(false);
-    formik.setFieldValue("coverImage",coverImageUrl)
+    formik.setFieldValue("coverImage", coverImageUrl)
   }
 
   const handleSubmit = (values) => {
@@ -56,7 +56,8 @@ export default function ProfileModal({ open, handleClose }) {
       firstName: auth.user.firstName || "",
       lastName: auth.user.lastName || "",
       profileImage: auth.user.profileImage || "",
-      coverImage: auth.user.coverImage || ""
+      coverImage: auth.user.coverImage || "",
+      location: auth.user.location || ""
     },
     onSubmit: (values) => {
       console.log("values", values)
@@ -83,7 +84,7 @@ export default function ProfileModal({ open, handleClose }) {
                 <p>Edit Profile</p>
 
               </div>
-              <Button onClick={()=>{
+              <Button onClick={() => {
                 formik.handleSubmit();
                 handleClose();
               }} >Save</Button>
@@ -106,7 +107,7 @@ export default function ProfileModal({ open, handleClose }) {
                 <input type="file" accept='image/*' onChange={handleSelectProlfileImage} style={{ display: "none" }} id='image-input' />
                 <label htmlFor='image-input'>
                   <div style={{ position: 'absolute', bottom: '-1.5rem', left: '28%', transform: 'translateY(-450%)', borderRadius: '50%', backgroundColor: 'white', padding: '6px' }}>
-                    <AddAPhotoIcon style={{ color: 'black',cursor:'pointer' }} />
+                    <AddAPhotoIcon style={{ color: 'black', cursor: 'pointer' }} />
                   </div>
                 </label>
               </div>
@@ -127,6 +128,15 @@ export default function ProfileModal({ open, handleClose }) {
                 name='lastName'
                 label='Last Name'
                 value={formik.values.lastName}
+                onChange={formik.handleChange}
+              />
+
+              <TextField
+                fullWidth
+                id='location'
+                name='location'
+                label='Location'
+                value={formik.values.location}
                 onChange={formik.handleChange}
               />
 

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PopularUser from './PopularUser';
 import { Card } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllUser } from '../../Redux/Auth/auth.action';
+import { getAllUser, getSuggestedUsers } from '../../Redux/Auth/auth.action';
 import SearchFollowUser from '../SearchUser/SearchFollowUser';
 
 const HomeRight = () => {
@@ -10,7 +10,7 @@ const HomeRight = () => {
   const { auth } = useSelector((store) => store);
 
   useEffect(() => {
-    dispatch(getAllUser());
+    dispatch(getSuggestedUsers());
   }, [dispatch]);
 
   const suggestions = auth.users.filter(user => user.id !== auth.jwt.id);

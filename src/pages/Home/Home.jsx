@@ -20,7 +20,7 @@ const Home = () => {
   },[jwt])
 
   const {auth}=useSelector(store=>store);
-  console.log("auth",auth)
+  // console.log("auth",auth)
  
 
   const location = useLocation();
@@ -40,7 +40,7 @@ const Home = () => {
             <Route path='/' element={<MiddlePart />}></Route>
             <Route path='/reels' element={<Reels />}></Route>
             <Route path='/create-reel' element={<CreateReel />}></Route>
-            <Route path='/profile/:id' element={<Profile />}></Route>
+            <Route path='/profile/:id' element={<Profile/>}></Route>
             <Route path='/home' element={<MiddlePart />}></Route>
             <Route path='/create-post' element={<CreatePostModal/>}></Route>
 

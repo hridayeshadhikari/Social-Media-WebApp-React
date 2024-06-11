@@ -31,7 +31,6 @@ export const postReducer = (state = initialState, action) => {
         case CREATE_POST_SUCCESS:
             return {
                 ...state,
-                posts: [action.payload, ...state.posts],
                 newPost: [action.payload, ...state.newPost],
                 loading: false,
                 error: null
