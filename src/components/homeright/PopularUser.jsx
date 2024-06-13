@@ -7,7 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { followUser } from '../../Redux/Auth/auth.action';
 import { Link } from 'react-router-dom';
 
-const PopularUser = ({ item }) => {
+const PopularUser = ({ item ,handleCloseFollower}) => {
+
+    const handleClick=()=>{
+        handleCloseFollower();
+    }
     const dispatch = useDispatch();
     const { auth } = useSelector((store) => store);
     const [isFollowed, setIsFollowed] = useState(false);
@@ -42,7 +46,7 @@ const PopularUser = ({ item }) => {
                     </IconButton>
                 }
                 title={
-                    <Link to={`/profile/${item.id}`}>{item.firstName + ' ' + item.lastName}
+                    <Link to={`/profile/${item.id}`} onClick={handleClick}>{item.firstName + ' ' + item.lastName}
                     </Link>
                 }
                 subheader={'@' + item.firstName?.toLowerCase() + '_' + item.lastName?.toLowerCase()}

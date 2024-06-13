@@ -12,7 +12,7 @@ import ProfileModal from './ProfileModal';
 import { getSavePost, getUsersPostAction } from '../../Redux/Post/post.action';
 import { getUsersReel } from '../../Redux/Reel/reel.action';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { getUserByID, getUsersFollower } from '../../Redux/User/user.action';
+import { getUserByID, getUsersFollower, getUsersFollowing } from '../../Redux/User/user.action';
 import SearchFollowUser from '../../components/SearchUser/SearchFollowUser';
 import PopularUser from '../../components/homeright/PopularUser';
 
@@ -43,8 +43,8 @@ const styles = {
   border: '1px solid #000',
   boxShadow: 24,
   p: 2,
-  maxHeight: '80vh', 
-  overflow: 'auto', 
+  maxHeight: '80vh',
+  overflow: 'auto',
 };
 
 const Profile = () => {
@@ -71,6 +71,16 @@ const Profile = () => {
     setOpenFollower(false);
   };
 
+  const [openFollowing, setOpenFollowing] = useState(false);
+
+  const handleOpenFollowing = () => {
+    setOpenFollowing(true);
+  };
+
+  const handleCloseFollowing = () => {
+    setOpenFollowing(false);
+  };
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -90,6 +100,7 @@ const Profile = () => {
     dispatch(getUsersReel(id))
     dispatch(getUserByID(id))
     dispatch(getUsersFollower(id))
+    dispatch(getUsersFollowing(id))
   }, [dispatch, id])
 
 
@@ -128,23 +139,42 @@ const Profile = () => {
           <div className='flex gap-3 items-center py-3'>
             <span>{post?.usersPost.length} Post</span>
             <span className='cursor-pointer' onClick={handleOpenFollower}>{userDetail.user?.followers.length} Follower</span>
+            
+            {/*modal for followers list*/}
             <Modal
-            open={openFollower}
-            onClose={handleCloseFollower}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={styles}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                <h2 className='text-center border-b-2'>Followers</h2>
-                <SearchFollowUser />
+              open={openFollower}
+              onClose={handleCloseFollower}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={styles}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  <h2 className='text-center border-b-2'>Followers</h2>
+                  <SearchFollowUser />
 
-                {userDetail.follower.map((item)=> <PopularUser key={item.id} item={item}/>)}
-              </Typography>
+                  {userDetail.follower?.length > 0 ? userDetail.follower?.map((item) => <PopularUser key={item.id} item={item} handleCloseFollower={handleCloseFollower} />) : <div className='text-center'>No Followers</div>}
+                </Typography>
 
-            </Box>
-          </Modal>
-            <span>{userDetail.user?.following.length} Followings</span>
+              </Box>
+            </Modal>
+            <span className='cursor-pointer' onClick={handleOpenFollowing}>{userDetail.user?.following.length} Followings</span>
+            {/*modal for following list*/}
+            <Modal
+              open={openFollowing}
+              onClose={handleCloseFollowing}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={styles}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  <h2 className='text-center border-b-2'>Following</h2>
+                  <SearchFollowUser />
+
+                  {userDetail.following?.length > 0 ? userDetail.following?.map((item) => <PopularUser key={item.id} item={item} handleCloseFollower={handleCloseFollowing} />) : <div className='text-center'>No Following</div>}
+                </Typography>
+
+              </Box>
+            </Modal>
           </div>
 
 
