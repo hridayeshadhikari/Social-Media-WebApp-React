@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
 import { Button, Card, Modal, Typography } from '@mui/material';
@@ -12,7 +12,9 @@ import ProfileModal from './ProfileModal';
 import { getSavePost, getUsersPostAction } from '../../Redux/Post/post.action';
 import { getUsersReel } from '../../Redux/Reel/reel.action';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { getUserByID } from '../../Redux/User/user.action';
+import { getUserByID, getUsersFollower } from '../../Redux/User/user.action';
+import SearchFollowUser from '../../components/SearchUser/SearchFollowUser';
+import PopularUser from '../../components/homeright/PopularUser';
 
 const tabs = [{ value: "post", name: "Posts" },
 { value: "reels", name: "Reels" },
@@ -31,6 +33,20 @@ const style = {
   p: 0,
 };
 
+const styles = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid #000',
+  boxShadow: 24,
+  p: 2,
+  maxHeight: '80vh', 
+  overflow: 'auto', 
+};
+
 const Profile = () => {
 
 
@@ -45,7 +61,15 @@ const Profile = () => {
   const handleOpenProfile = () => setOpenProfile(true);
   const handleCloseProfile = () => setOpenProfile(false);
 
+  const [openFollower, setOpenFollower] = useState(false);
 
+  const handleOpenFollower = () => {
+    setOpenFollower(true);
+  };
+
+  const handleCloseFollower = () => {
+    setOpenFollower(false);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -65,10 +89,11 @@ const Profile = () => {
   useEffect(() => {
     dispatch(getUsersReel(id))
     dispatch(getUserByID(id))
+    dispatch(getUsersFollower(id))
   }, [dispatch, id])
 
 
-  // console.log("=============>",auth.user?.id===userDetail.user?.id)
+  // console.log("==========>follower",userDetail.follower)
 
 
   return (
@@ -102,7 +127,23 @@ const Profile = () => {
           </div>
           <div className='flex gap-3 items-center py-3'>
             <span>{post?.usersPost.length} Post</span>
-            <span>{userDetail.user?.followers.length} Follower</span>
+            <span className='cursor-pointer' onClick={handleOpenFollower}>{userDetail.user?.followers.length} Follower</span>
+            <Modal
+            open={openFollower}
+            onClose={handleCloseFollower}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={styles}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                <h2 className='text-center border-b-2'>Followers</h2>
+                <SearchFollowUser />
+
+                {userDetail.follower.map((item)=> <PopularUser key={item.id} item={item}/>)}
+              </Typography>
+
+            </Box>
+          </Modal>
             <span>{userDetail.user?.following.length} Followings</span>
           </div>
 
@@ -115,7 +156,15 @@ const Profile = () => {
               onChange={handleChange}
               aria-label="wrapped label tabs example"
             >
-              {tabs.map((item) => (<Tab value={item.value} label={item.name} wrapped />))}
+              {tabs.map((item) => (
+                (item.value === 'saved' && auth.user?.id === userDetail.user?.id) ? (
+                  <Tab value={item.value} label={item.name} wrapped key={item.value} />
+                ) : (
+                  auth.user?.id === userDetail.user?.id || item.value !== 'saved' ? (
+                    <Tab value={item.value} label={item.name} wrapped key={item.value} />
+                  ) : null
+                )
+              ))}
             </Tabs>
           </Box>
           <div className='flex justify-center'>

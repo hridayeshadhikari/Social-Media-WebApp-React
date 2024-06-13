@@ -45,7 +45,7 @@ const PopularUser = ({ item }) => {
                     <Link to={`/profile/${item.id}`}>{item.firstName + ' ' + item.lastName}
                     </Link>
                 }
-                subheader={'@' + item.firstName.toLowerCase() + '_' + item.lastName.toLowerCase()}
+                subheader={'@' + item.firstName?.toLowerCase() + '_' + item.lastName?.toLowerCase()}
             />
         </div>
     );
