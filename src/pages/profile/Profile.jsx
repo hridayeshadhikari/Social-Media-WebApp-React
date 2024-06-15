@@ -15,6 +15,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { getUserByID, getUsersFollower, getUsersFollowing } from '../../Redux/User/user.action';
 import SearchFollowUser from '../../components/SearchUser/SearchFollowUser';
 import PopularUser from '../../components/homeright/PopularUser';
+import { followUser } from '../../Redux/Auth/auth.action';
 
 const tabs = [{ value: "post", name: "Posts" },
 { value: "reels", name: "Reels" },
@@ -72,6 +73,7 @@ const Profile = () => {
   };
 
   const [openFollowing, setOpenFollowing] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
 
   const handleOpenFollowing = () => {
     setOpenFollowing(true);
@@ -104,6 +106,16 @@ const Profile = () => {
   }, [dispatch, id])
 
 
+  const handleFollow = (userId) => {
+    if (isFollowed) {
+      dispatch(followUser(userId))
+      setIsFollowed(false)
+    }
+    else{
+      dispatch(followUser(userId))
+      setIsFollowed(true)
+    }
+  }
   // console.log("==========>follower",userDetail.follower)
 
 
@@ -129,7 +141,7 @@ const Profile = () => {
             </Box>
           </Modal>
           {auth.user?.id === userDetail.user?.id ? <Button onClick={handleOpen} sx={{ borderRadius: "20px" }} variant='outlined'>Edit Profile</Button>
-            : <Button sx={{ borderRadius: "20px" }} variant='outlined'>Follow</Button>}
+            : <Button onClick={() => handleFollow(userDetail.user.id)} sx={{ borderRadius: "20px" }} variant='outlined' >{isFollowed ? 'unfollow' : 'follow'}</Button>}
         </div>
         <div className='p-5'>
           <div>
@@ -139,7 +151,7 @@ const Profile = () => {
           <div className='flex gap-3 items-center py-3'>
             <span>{post?.usersPost.length} Post</span>
             <span className='cursor-pointer' onClick={handleOpenFollower}>{userDetail.user?.followers.length} Follower</span>
-            
+
             {/*modal for followers list*/}
             <Modal
               open={openFollower}
@@ -152,7 +164,7 @@ const Profile = () => {
                   <h2 className='text-center border-b-2'>Followers</h2>
                   <SearchFollowUser />
 
-                  {userDetail.follower?.length > 0 ? userDetail.follower?.map((item) => <PopularUser key={item.id} item={item} handleCloseFollower={handleCloseFollower} />) : <div className='text-center'>No Followers</div>}
+                  {userDetail.follower?.length > 0 ? userDetail.follower?.map((item) => <PopularUser  item={item} handleClose={handleCloseFollower}/>) : <div className='text-center'>No Followers</div>}
                 </Typography>
 
               </Box>
@@ -170,7 +182,7 @@ const Profile = () => {
                   <h2 className='text-center border-b-2'>Following</h2>
                   <SearchFollowUser />
 
-                  {userDetail.following?.length > 0 ? userDetail.following?.map((item) => <PopularUser key={item.id} item={item} handleCloseFollower={handleCloseFollowing} />) : <div className='text-center'>No Following</div>}
+                  {userDetail.following?.length > 0 ? userDetail.following?.map((item) => <PopularUser item={item} handleClose={handleCloseFollowing} />) : <div className='text-center'>No Following</div>}
                 </Typography>
 
               </Box>

@@ -27,11 +27,7 @@ export const sideMenuBarItems=[
     icon:<MessageIcon/>,
     path:"/message"
   },
-  {
-    title:"Lists",
-    icon:<ListAltIcon/>,
-    path:"/list"
-  },
+  
   {
     title:"Create Post",
     icon:<QueueIcon/>,

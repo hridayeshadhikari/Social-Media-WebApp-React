@@ -78,7 +78,7 @@ const Reels = () => {
       <div className="video-container">
         {reel.reel.map((item) => (
           <div className="video-item" >
-            <ReelCards item={item} />
+            <ReelCards key={item.id} item={item} />
           </div>
         ))}
       </div>

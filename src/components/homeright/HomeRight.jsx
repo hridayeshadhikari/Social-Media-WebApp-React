@@ -17,13 +17,12 @@ const HomeRight = () => {
 
   return (
     <div className='pr-5'>
-      <SearchFollowUser/>
-      <Card>
+      <SearchFollowUser />
+      <Card className='overflow-auto' style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'auto' }}>
         <div className='flex justify-between py-5 items-center'>
           <p className='font-semibold opacity-70 ml-3'>Suggestions for you</p>
-          <p className='text-xs font-semibold opacity-90 mr-3'>View All</p>
         </div>
-        <div className=''>
+        <div>
           {suggestions.map((item) => <PopularUser key={item.id} item={item}/>)}
         </div>
       </Card>
