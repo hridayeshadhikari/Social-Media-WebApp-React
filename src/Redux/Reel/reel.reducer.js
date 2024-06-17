@@ -1,4 +1,7 @@
-import { CREATE_REEL_COMMENT_FAILURE, CREATE_REEL_COMMENT_REQUEST, CREATE_REEL_COMMENT_SUCCESS, GET_ALL_REELS_FAILURE, GET_ALL_REELS_REQUEST, GET_ALL_REELS_SUCCESS, GET_USERS_REEL_FAILURE, GET_USERS_REEL_REQUEST, GET_USERS_REEL_SUCCESS, LIKE_REEL_FAILURE, LIKE_REEL_REQUEST, LIKE_REEL_SUCCESS } from "./reel.actionType";
+
+
+
+import { CREATE_REEL_COMMENT_FAILURE, CREATE_REEL_COMMENT_REQUEST, CREATE_REEL_COMMENT_SUCCESS, GET_ALL_REELS_FAILURE, GET_ALL_REELS_REQUEST, GET_ALL_REELS_SUCCESS, GET_USERS_REEL_FAILURE, GET_USERS_REEL_REQUEST, GET_USERS_REEL_SUCCESS, LIKE_REEL_COMMENT_FAILURE, LIKE_REEL_COMMENT_REQUEST, LIKE_REEL_COMMENT_SUCCESS, LIKE_REEL_FAILURE, LIKE_REEL_REQUEST, LIKE_REEL_SUCCESS } from "./reel.actionType";
 
 
 // Initial state
@@ -7,7 +10,7 @@ const initialState = {
     loading: false,
     error: null,
     like:null,
-    comment:[],
+    comments:[],
     newComment:null
 };
 
@@ -18,6 +21,7 @@ const reelReducer = (state = initialState, action) => {
         case GET_USERS_REEL_REQUEST:
         case LIKE_REEL_REQUEST:
         case CREATE_REEL_COMMENT_REQUEST:
+        case LIKE_REEL_COMMENT_REQUEST:
             return {
                 ...state,
                 loading: true,
@@ -29,23 +33,44 @@ const reelReducer = (state = initialState, action) => {
                 ...state,
                 reel: action.payload, 
                 // Update 'reel' with the fetched data
-                comment: action.payload.comment,
+                comments: action.payload.comments,
                 loading: false,
                 error: null
             };
 
-        case CREATE_REEL_COMMENT_SUCCESS:
+        case LIKE_REEL_COMMENT_SUCCESS:
             return{
                 ...state,
+                newComment:action.payload,
                 loading:false,
-                error:null,
-                newComment:action.payload
+                error:null
             }
+
+            case CREATE_REEL_COMMENT_SUCCESS:
+                const newComment = action.payload;
+                return {
+                    ...state,
+                    loading: false,
+                    error: null,
+                    newComment: newComment,
+                    reel: state.reel.map(item => {
+                        if (item.id === newComment.reelId) {
+                            return {
+                                ...item,
+                                comments: [...item.comments, newComment]
+                            };
+                        }
+                        return item;
+                    })
+                };
+            
 
         case LIKE_REEL_SUCCESS:
             return{
                 ...state,
                 like:action.payload,
+                reel: state.reel.map((item) => item.id === action.payload
+                    .id ? action.payload : item),
                 loading:false,
                 error:null
             }
@@ -53,6 +78,7 @@ const reelReducer = (state = initialState, action) => {
         case GET_USERS_REEL_FAILURE:
         case LIKE_REEL_FAILURE:
         case CREATE_REEL_COMMENT_FAILURE:
+        case LIKE_REEL_COMMENT_FAILURE:
             return {
                 ...state,
                 loading: false,

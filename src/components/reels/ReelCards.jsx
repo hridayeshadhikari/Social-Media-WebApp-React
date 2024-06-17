@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import "./Reels.css"
 import { Avatar, Box, Button, IconButton, Menu, MenuItem, Modal, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { followUser } from '../../Redux/Auth/auth.action';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -14,7 +9,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import { Favorite } from '@mui/icons-material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { createReelComment, likeReel } from '../../Redux/Reel/reel.action';
+import { createReelComment, getAllReels, likeReel, likeReelComment } from '../../Redux/Reel/reel.action';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { likeComment } from '../../Redux/Post/post.action';
+import { isReelLiked } from '../../Utils/isReelLiked';
+import { useParams } from 'react-router-dom';
+import { isCommentLiked } from '../../Utils/isCommentLiked';
 
 const style = {
   position: 'absolute',
@@ -35,19 +35,21 @@ function ReelCard({ item }) {
   const handleOpen = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const { auth ,reel} = useSelector((store) => store);
   const [isFollowed, setIsFollowed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [commentText, setCommentText] = useState('')
   const [currentReelId, setCurrentReelId] = useState(item.id); // Track current playing reel id
   const videoRef = useRef(null);
+  
 
   const handleCreateReelComment = (description) => {
     const reqData = {
-      reelId: 1,
+      reelId: item.id,
       data: { description }
     }
     dispatch(createReelComment(reqData))
+    dispatch(getAllReels())
     setCommentText('')
   }
 
@@ -60,40 +62,39 @@ function ReelCard({ item }) {
     dispatch(followUser(userId));
   };
 
+  const [currentPlayingReelId, setCurrentPlayingReelId] = useState(null);
+
   const handleClick = () => {
     if (videoRef.current) {
+      // Pause current playing video if different from clicked video
+      if (currentPlayingReelId !== item.id && currentPlayingReelId !== null) {
+        const prevVideo = document.getElementById(`video-${currentPlayingReelId}`);
+        if (prevVideo) {
+          prevVideo.pause();
+          prevVideo.currentTime = 0; // Reset current time to start of the video
+        }
+      }
+  
       if (isPlaying) {
         videoRef.current.pause();
+        setCurrentPlayingReelId(null);
       } else {
         videoRef.current.play();
+        setCurrentPlayingReelId(item.id);
       }
       setIsPlaying(!isPlaying);
     }
   };
-
+  
   const handleVideoEnded = () => {
     if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play();
+      videoRef.current.currentTime = 0; // Reset current time to start of the video
+      videoRef.current.pause();
+      setCurrentPlayingReelId(null);
     }
   };
+  
 
-  // Intersection Observer callback function
-  const handleIntersection = (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // If the video is in view, restart it
-        if (!isPlaying && videoRef.current) {
-          videoRef.current.currentTime = 0;
-          videoRef.current.play();
-        }
-      }
-    });
-  };
-
-
-
-  // Create the Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, { threshold: 0.5 });
     if (videoRef.current) {
@@ -107,6 +108,31 @@ function ReelCard({ item }) {
     };
   }, [videoRef]);
 
+  
+  const handleIntersection = (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        
+        if (!isPlaying && videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play();
+          setCurrentPlayingReelId(item.id); 
+        }
+      } else {
+        if (currentPlayingReelId === item.id && videoRef.current) {
+          videoRef.current.pause();
+          setCurrentPlayingReelId(null); 
+        }
+      }
+    });
+  };
+
+
+
+
+
+
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClickIcn = (event) => {
@@ -117,26 +143,17 @@ function ReelCard({ item }) {
     setAnchorEl(null);
   };
 
-  const reelLikeHandler = (reelId) => {
-    dispatch(likeReel(reelId));
-  };
+  
 
-  const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Share Post',
-          text: `Check out this post by ${item.user.firstName} ${item.user.lastName}: ${item.caption}`,
-          url: window.location.href
-        });
-      } else {
-        console.log("Web Share API not supported");
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-    handleClose();
-  };
+  const likeCommentHandler=(commentId)=>{
+    dispatch(likeComment(commentId))
+  }
+
+  const likeReelHandler=(reelId)=>{
+    dispatch(likeReelComment(reelId));
+  }
+
+  console.log("==========>item",item)
 
   return (
     <div className='flex'>
@@ -151,17 +168,33 @@ function ReelCard({ item }) {
 
         <div className="caption" style={{ position: 'absolute', bottom: '2rem', left: '1.5rem', color: 'white', padding: '8px' }}>
           <div className='flex-col justify-start items-start'>
-            <p>@{item.user.firstName.toLowerCase()}_{item.user.lastName.toLowerCase()}  {auth.user?.id !== item.user?.id ? <Button onClick={() => handleFollow(item.user.id)} variant='outlined' sx={{ color: "white", width: '90px', height: '25px', marginLeft: '10px' }}> {isFollowed ? 'Unfollow' : 'Follow'}</Button> : <></>}</p>
+            <p>@{item.user.firstName.toLowerCase()}_{item.user.lastName.toLowerCase()}  </p>
             <p style={{ textAlign: 'start' }}>{item.caption}</p>
           </div>
-        </div>
-      </div>
+          <div className='flex-col' style={{ position: 'absolute', right: '-5rem', bottom: '-4rem', transform: 'translateX(80%) translatey(-50%)', display: 'flex', alignItems: 'center' }}>
+            {isReelLiked(auth.user?.id,item) ? <FavoriteIcon sx={{color:'red'}} onClick={()=>likeReelHandler(item.id)} style={{ marginRight: '10px', marginBottom: '1.5rem', cursor: 'pointer', fontSize: '2rem' }}/> : <FavoriteBorderIcon onClick={()=>likeReelHandler(item.id)} style={{ marginRight: '10px', marginBottom: '1.5rem', cursor: 'pointer', fontSize: '2rem' }} />}
+            <InsertCommentIcon onClick={handleOpen} style={{ cursor: 'pointer', fontSize: '2rem', marginBottom: '1.5rem' }} />
+            <ShareIcon style={{ marginRight: '10px', marginBottom: '1.5rem', cursor: 'pointer', fontSize: '2rem' }} />
+            <MoreVertIcon
+              className='cursor-pointer'
+              aria-label="more"
+              aria-controls="dropdown-menu"
+              aria-haspopup="true"
+              onClick={handleClickIcn}
+              sx={{ fontSize: '2rem' }}
+            />
+            <Menu
+              id="dropdown-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>copy link</MenuItem>
+              <MenuItem onClick={handleClose}>share</MenuItem>
+              <MenuItem onClick={handleClose}>cancel</MenuItem>
+            </Menu>
 
-      <div className='flex-col' style={{ position: 'absolute', top: '19rem', right: '19rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <ThumbUpOffAltIcon onClick={() => reelLikeHandler(currentReelId)} className='mb-7 cursor-pointer' sx={{ fontSize: '2rem' }} />
-          <ThumbDownOffAltIcon className='mb-7 cursor-pointer' sx={{ fontSize: '2rem' }} />
-          <InsertCommentIcon onClick={handleOpen} className='mb-7 cursor-pointer' sx={{ fontSize: '2rem' }} />
+          </div>
           <Modal
             open={open}
             onClose={handleCloseModal}
@@ -177,25 +210,25 @@ function ReelCard({ item }) {
                   <p>Comments</p>
                 </div>
               </div>
-              <div className="flex items-start border-b-2 m-1 mt-5">
+              {item.comments.slice().reverse().map((comment) => <div className="flex items-start border-b-2 m-1 mt-5">
                 <div className='flex items-center space-x-2'>
-                  <Avatar sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }}></Avatar>
+                  <Avatar sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }} src={comment.user?.profileImage} ></Avatar>
                   <div className='flex-col'>
                     <p className='text-sm font-bold'>
-                      Hridayesh Adhikari
+                      {comment.user?.firstName}_{comment.user?.lastName}
                     </p>
-                    <p className='text-sm'> nice pic</p>
+                    <p className='text-sm'>{comment.description}</p>
                   </div>
                 </div>
                 <div className='flex-col ml-7 -mt-1 '>
-                  <IconButton aria-label="like-comment">
-                    {true ? <Favorite sx={{ color: "red", fontSize: '1.2rem' }} /> : <FavoriteBorderIcon />}
+                  <IconButton onClick={()=>likeCommentHandler(comment.id)} aria-label="like-comment">
+                    {isCommentLiked(auth.user?.id,comment) ? <Favorite  sx={{ color: "red", fontSize: '1.2rem' }} /> : <FavoriteBorderIcon />}
                   </IconButton>
-                  <p className='text-xs -mt-2'>10 likes</p>
+                  <p className='text-xs -mt-2'>{comment.liked?.length} Likes</p>
                 </div>
-              </div>
+              </div>)}
               <div className='flex items-center justify-between sticky -bottom-1 w-full bg-white z-10 '>
-                <Avatar />
+                <Avatar src={auth.user.profileImage}/>
                 <input
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
@@ -206,29 +239,10 @@ function ReelCard({ item }) {
                     }
                   }} className='ml-3 outline-none bg-transparent border border-[#3b4054] rounded-full p-2 flex-grow' type="text" placeholder='write your comment....' />
 
-                <SendIcon onClick={()=>handleCreateReelComment(commentText)} className='ml-3 cursor-pointer transform -translate-x-10' sx={{ color: 'grey' }} />
+                <SendIcon onClick={() => handleCreateReelComment(commentText)} className='ml-3 cursor-pointer transform -translate-x-10' sx={{ color: 'grey' }} />
               </div>
             </Box>
           </Modal>
-          <ShareIcon className='mb-7 cursor-pointer ' sx={{ fontSize: '2rem' }} />
-          <MoreVertIcon
-            className='cursor-pointer'
-            aria-label="more"
-            aria-controls="dropdown-menu"
-            aria-haspopup="true"
-            onClick={handleClickIcn}
-            sx={{ fontSize: '2rem' }}
-          />
-          <Menu
-            id="dropdown-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>Save</MenuItem>
-            <MenuItem onClick={handleShare}>Share</MenuItem>
-            <MenuItem onClick={handleClose}>Cancel</MenuItem>
-          </Menu>
         </div>
       </div>
     </div>

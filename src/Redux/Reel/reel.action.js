@@ -1,5 +1,5 @@
 import { api } from "../../config/api"
-import { CREATE_REEL_COMMENT_FAILURE, CREATE_REEL_COMMENT_REQUEST, CREATE_REEL_COMMENT_SUCCESS, CREATE_REEL_FAILURE, CREATE_REEL_REQUEST, CREATE_REEL_SUCCESS, GET_ALL_REELS_FAILURE, GET_ALL_REELS_REQUEST, GET_ALL_REELS_SUCCESS, GET_USERS_REEL_REQUEST, LIKE_REEL_FAILURE, LIKE_REEL_REQUEST, LIKE_REEL_SUCCESS } from "./reel.actionType"
+import { CREATE_REEL_COMMENT_FAILURE, CREATE_REEL_COMMENT_REQUEST, CREATE_REEL_COMMENT_SUCCESS, CREATE_REEL_FAILURE, CREATE_REEL_REQUEST, CREATE_REEL_SUCCESS, GET_ALL_REELS_FAILURE, GET_ALL_REELS_REQUEST, GET_ALL_REELS_SUCCESS, GET_USERS_REEL_REQUEST, LIKE_REEL_COMMENT_FAILURE, LIKE_REEL_COMMENT_REQUEST, LIKE_REEL_COMMENT_SUCCESS, LIKE_REEL_FAILURE, LIKE_REEL_REQUEST, LIKE_REEL_SUCCESS } from "./reel.actionType"
 
 export const getAllReels = () => async (dispatch) => {
     dispatch({ type: GET_ALL_REELS_REQUEST })
@@ -50,4 +50,16 @@ export const createReelComment = (reqData) => async (dispatch) => {
     } catch (error) {
         dispatch({type:CREATE_REEL_COMMENT_FAILURE,payload:error})
     }
+}
+
+export const likeReelComment=(commentId)=> async (dispatch)=>{
+    dispatch({type:LIKE_REEL_COMMENT_REQUEST})
+    try {
+        const {data}=await api.put(`api/post/comment/like/${commentId}`)
+        console.log("=======>",data)
+        dispatch({type:LIKE_REEL_COMMENT_SUCCESS,payload:data})
+    } catch (error) {
+        dispatch({type:LIKE_REEL_COMMENT_FAILURE,payload:error})
+    }
+
 }
