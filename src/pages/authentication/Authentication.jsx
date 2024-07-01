@@ -1,5 +1,6 @@
 import React from 'react'
 import Login from './Login';
+import appLogo from '../../Asset/chat1.png'
 
 import { Card } from "@mui/material"
 import Signup from './Signup';
@@ -13,8 +14,14 @@ import {
 const Authentication = () => {
   return (
     <div>
-      <section className="flex flex-col md:flex-row justify-center space-y-10 md:space-y-0 md:space-x-16 items-center my-2 mx-5 md:mx-0 md:my-0">
-       
+      <section className="h-screen flex flex-col md:flex-row justify-center space-y-10 md:space-y-0 md:space-x-16 items-center my-2 mx-5 md:mx-0 md:my-0">
+        <div className="md:w-1/3 max-w-sm">
+          <img
+            src={appLogo}
+            alt="Sample image"
+          />
+        </div>
+
         <Card className="card p-12 mt-7 items-center justify-center">
 
           <div className="container text-center mt-0 ">
@@ -24,9 +31,9 @@ const Authentication = () => {
           </div>
           <Routes>
 
-            <Route path='/' element={<Login/>}></Route>
-            <Route path='/register' element={<Signup/>}></Route>
-            <Route path='/login' element={<Login/>}></Route>
+            <Route path='/' element={<Login />}></Route>
+            <Route path='/register' element={<Signup />}></Route>
+            <Route path='/login' element={<Login />}></Route>
 
           </Routes>
 
